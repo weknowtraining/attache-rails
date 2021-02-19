@@ -36,22 +36,22 @@ module Attache
 
         def has_one_attache(name)
           attache_setup_column(name)
-          define_method "#{name}_options",    -> (geometry, options = {}) { Hash(class: 'enable-attache', multiple: false).merge(attache_field_options(self.send(name), geometry, options)) }
-          define_method "#{name}_url",        -> (geometry)               { attache_field_urls(self.send(name), geometry).try(:first) }
-          define_method "#{name}_attributes", -> (geometry)               { attache_field_attributes(self.send(name), geometry).try(:first) }
-          define_method "#{name}=",           -> (value)                  { super(attache_field_set(Array.wrap(value)).try(:first)) }
-          after_save                          ->                          { attache_update_pending_diffs(self.send("#{name}_before_last_save"), self.send("#{name}"), self.attaches_to_backup ||= [], self.attaches_discarded ||= []) }
-          after_destroy                       ->                          { attache_update_pending_diffs(self.send("#{name}_was"), [], self.attaches_to_backup ||= [], self.attaches_discarded ||= []) }
+          define_method "#{name}_options",    -> (geometry, **options) { Hash(class: 'enable-attache', multiple: false).merge(attache_field_options(self.send(name), geometry, **options)) }
+          define_method "#{name}_url",        -> (geometry)            { attache_field_urls(self.send(name), geometry).try(:first) }
+          define_method "#{name}_attributes", -> (geometry)            { attache_field_attributes(self.send(name), geometry).try(:first) }
+          define_method "#{name}=",           -> (value)               { super(attache_field_set(Array.wrap(value)).try(:first)) }
+          after_save                          ->                       { attache_update_pending_diffs(self.send("#{name}_before_last_save"), self.send("#{name}"), self.attaches_to_backup ||= [], self.attaches_discarded ||= []) }
+          after_destroy                       ->                       { attache_update_pending_diffs(self.send("#{name}_was"), [], self.attaches_to_backup ||= [], self.attaches_discarded ||= []) }
         end
 
         def has_many_attaches(name)
           attache_setup_column(name)
-          define_method "#{name}_options",    -> (geometry, options = {}) { Hash(class: 'enable-attache', multiple: true).merge(attache_field_options(self.send(name), geometry, options)) }
-          define_method "#{name}_urls",       -> (geometry)               { attache_field_urls(self.send(name), geometry) }
-          define_method "#{name}_attributes", -> (geometry)               { attache_field_attributes(self.send(name), geometry) }
-          define_method "#{name}=",           -> (value)                  { super(attache_field_set(Array.wrap(value))) }
-          after_save                          ->                          { attache_update_pending_diffs(self.send("#{name}_before_last_save"), self.send("#{name}"), self.attaches_to_backup ||= [], self.attaches_discarded ||= []) }
-          after_destroy                       ->                          { attache_update_pending_diffs(self.send("#{name}_was"), [], self.attaches_to_backup ||= [], self.attaches_discarded ||= []) }
+          define_method "#{name}_options",    -> (geometry, **options) { Hash(class: 'enable-attache', multiple: true).merge(attache_field_options(self.send(name), geometry, **options)) }
+          define_method "#{name}_urls",       -> (geometry)            { attache_field_urls(self.send(name), geometry) }
+          define_method "#{name}_attributes", -> (geometry)            { attache_field_attributes(self.send(name), geometry) }
+          define_method "#{name}=",           -> (value)               { super(attache_field_set(Array.wrap(value))) }
+          after_save                          ->                       { attache_update_pending_diffs(self.send("#{name}_before_last_save"), self.send("#{name}"), self.attaches_to_backup ||= [], self.attaches_discarded ||= []) }
+          after_destroy                       ->                       { attache_update_pending_diffs(self.send("#{name}_was"), [], self.attaches_to_backup ||= [], self.attaches_discarded ||= []) }
         end
       end
     end
